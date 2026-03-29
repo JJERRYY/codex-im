@@ -16,6 +16,7 @@ Codex 操作都留在 本地，飞书只负责消息交互。
 - 先加表情、后输出正文
 - 回复到触发它的原消息
 - `/codex bind` 绑定项目
+- `/codex discover` 从历史会话发现可恢复目录并点击绑定
 - `/codex where` 查看当前项目/线程
 - `/codex workspace` 查看当前会话已记录项目和线程
 - `/codex remove /绝对路径` 移除会话绑定项目
@@ -100,6 +101,7 @@ npm run feishu-bot
 常用命令：
 
 - `/codex bind /绝对路径`
+- `/codex discover`
 - `/codex where`
 - `/codex workspace`
 - `/codex remove /绝对路径`
@@ -112,7 +114,7 @@ npm run feishu-bot
 - `/codex model update`
 - `/codex effort`
 - `/codex approve`
-- `/codex approve session`
+- `/codex approve workspace`
 - `/codex reject`
 - `/codex help`
 
@@ -122,6 +124,7 @@ npm run feishu-bot
 - 每个项目对应一个当前选中的 Codex 线程
 - 历史线程列表以 Codex `thread/list` 为准
 - 切换项目或线程后，后续普通消息继续发到当前线程
+- 当前会话未绑定项目时，会优先推送“可恢复项目”卡片，用户可点击绑定
 
 ## 工作方式
 
@@ -130,13 +133,24 @@ npm run feishu-bot
 - 命令回执和普通对话都会优先回复到触发它的原消息
 - 审批请求会显示为交互卡片
 
+## 自维护 Fork
+
+如果你希望不跟随全局 `npm install -g @vdug/codex-im` 自动升级，建议使用本地 fork 运行：
+
+1. Fork 原仓库并 clone 到本地，例如 `./codex-im-fork`
+2. 在本地 fork 目录执行 `npm install`
+3. 启动时直接运行本地入口：`node ./bin/codex-im.js feishu-bot`
+4. 通过你自己的 fork 仓库进行文档/代码更新并 push
+
+这样即使全局包更新，你的机器人实例仍按本地 fork 版本运行。
+
 ## 开发
 
 - `src/index.js`: 启动入口
-- `src/feishu-bot.js`: 飞书机器人主逻辑
-- `src/codex-rpc-client.js`: Codex JSON-RPC 传输层
-- `src/session-store.js`: 会话绑定持久化
-- `src/config.js`: 环境变量配置
+- `src/app/feishu-bot-runtime.js`: 飞书机器人运行时
+- `src/infra/codex/rpc-client.js`: Codex JSON-RPC 传输层
+- `src/infra/storage/session-store.js`: 会话绑定持久化
+- `src/infra/config/config.js`: 环境变量配置
 
 
 # 飞书配置
